@@ -22,7 +22,7 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 	TArray<AActor*> PatrolPoints = PatrollingGuard->PatrolPointsCPP;
 
 
-	///Setting our next waypoint
+	///Setting our next waypoint || DOES NOT increment value
 	//Grabbing the owning component and getting the blackboard component from it 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
@@ -32,6 +32,24 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 	//Going into our Blackboard component and using our UPROPERTY's selected key name, we set the value
 	//of the next index to whatever our IndexFinder is, this DOES NOT increment the value
 	BlackboardComponent->SetValueAsObject(WaypointIndex.SelectedKeyName, PatrolPoints[IndexFinder]);
+
+
+
+	///Increment our index
+	//grabbing our iterator, adding one, and using modulus to return remainder against the 
+	//length of our patrol points (PatrolPoints.Num())
+	int32 NextIndex = (IndexFinder + 1) % PatrolPoints.Num();
+
+	//taking our same blackboard component and setting the value of Index to the value of NextIndex
+	//effectively iterating through our array and setting a patrol path in C++!
+	BlackboardComponent->SetValueAsInt(Index.SelectedKeyName, NextIndex);
+
+
+
+
+
+
+
 
 	//TODO protect against empty patrol routes
 
