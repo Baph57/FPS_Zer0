@@ -2,9 +2,14 @@
 
 #include "ChooseNextWaypointCLASS.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AIController.h"
 
 EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
+	//Grab patrol points
+	AAIController* AIController = OwnerComp.GetAIOwner();
+	APawn* ControlledPawn = AIController->GetPawn();
+
 	//using actual class instead of auto
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
