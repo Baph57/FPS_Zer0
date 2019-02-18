@@ -2,24 +2,34 @@
 
 #include "ChooseNextWaypointCLASS.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "PatrollingGuardToBeDeletedCLASS.h" //TODO guess what? DE-LETE THIS
+#include "PatrolRoutes.h"
 #include "AIController.h"
 
 EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
+
+	//TODO protect against empty patrol routes AND no Patrol Route Component
+	
+
+
 	///Getting our patrol points
-	//Grab the AI owner of the controller
-	AAIController* AIController = OwnerComp.GetAIOwner();
-
+	//Grab the AI owner of the controller & 
 	//Grabbing the pawn the controller is controlling
-	APawn* ControlledPawn = AIController->GetPawn();
+	APawn* ControlledPawn = OwnerComp.GetAIOwner()->GetPawn();
 
-	//casting this functionality to our patrolling guard class, which restrains this function
-	//to only work on the patrolling guard class AT THE MOMENT
-	APatrollingGuardToBeDeletedCLASS* PatrollingGuard = Cast<APatrollingGuardToBeDeletedCLASS>(ControlledPawn);
+	//Taking our controlled pawn and finding our patrol routes component
+	UPatrolRoutes* PatrolRoutes = ControlledPawn->FindComponentByClass<UPatrolRoutes>();
 
-	//patrol points is now a TArray that contains the 'actor' target points which are our patrol points!
-	TArray<AActor*> PatrolPoints = PatrollingGuard->PatrolPointsCPP;
+	//protecting against PatrolRoutes = nullptr;
+	if (!ensure(PatrolRoutes)) { return EBTNodeResult::Failed; }
+
+	//going into our patrol routes component and grabbing the getter
+	auto PatrolledPoints = PatrolRoutes->GetPatrolPoints();
+
+	if (PatrolledPoints.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("A guard is missing patrol points!"))
+	}
 
 
 	///Setting our next waypoint || DOES NOT increment value
@@ -31,14 +41,14 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 	
 	//Going into our Blackboard component and using our UPROPERTY's selected key name, we set the value
 	//of the next index to whatever our IndexFinder is, this DOES NOT increment the value
-	BlackboardComponent->SetValueAsObject(WaypointIndex.SelectedKeyName, PatrolPoints[IndexFinder]);
+	BlackboardComponent->SetValueAsObject(WaypointIndex.SelectedKeyName, PatrolledPoints[IndexFinder]);
 
 
 
 	///Increment our index
 	//grabbing our iterator, adding one, and using modulus to return remainder against the 
 	//length of our patrol points (PatrolPoints.Num())
-	int32 NextIndex = (IndexFinder + 1) % PatrolPoints.Num();
+	int32 NextIndex = (IndexFinder + 1) % PatrolledPoints.Num();
 
 	//taking our same blackboard component and setting the value of Index to the value of NextIndex
 	//effectively iterating through our array and setting a patrol path in C++!
@@ -51,7 +61,7 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 
 
 
-	//TODO protect against empty patrol routes
+
 
 
 	UE_LOG(LogTemp, Warning, TEXT("Waypoint index: %i"), IndexFinder)
