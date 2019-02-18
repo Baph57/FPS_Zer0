@@ -14,6 +14,11 @@ class ZER0_API UChooseNextWaypointCLASS : public UBTTaskNode
 {
 	GENERATED_BODY()
 
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-		virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+protected:
+	///publically exposing a Blackboard Key Struct
+	//creates a new key in blackboard called "Index"
+	UPROPERTY(EditAnywhere, Category = "Custom Blackboard")
+		struct FBlackboardKeySelector Index;
 };
