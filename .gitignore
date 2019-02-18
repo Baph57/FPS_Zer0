@@ -67,3 +67,4 @@ DerivedDataCache/*
 
 #Including but ignoring Starter Content
 Content/StarterContent/*
+.vs/
