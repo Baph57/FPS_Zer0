@@ -15,6 +15,7 @@ class ZER0_API APatrollingGuardToBeDeletedCLASS : public ATP_ThirdPersonCharacte
 	GENERATED_BODY()
 
 
+public: //TODO remove or create a getter
 	UPROPERTY(EditInstanceOnly, Category = "Custom Patrol Route")
 		TArray<AActor*> PatrolPointsCPP;
 };

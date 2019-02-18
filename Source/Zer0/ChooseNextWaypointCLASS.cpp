@@ -2,21 +2,40 @@
 
 #include "ChooseNextWaypointCLASS.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "PatrollingGuardToBeDeletedCLASS.h" //TODO guess what? DE-LETE THIS
 #include "AIController.h"
 
 EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent & OwnerComp, uint8 * NodeMemory)
 {
-	//Grab patrol points
+	///Getting our patrol points
+	//Grab the AI owner of the controller
 	AAIController* AIController = OwnerComp.GetAIOwner();
+
+	//Grabbing the pawn the controller is controlling
 	APawn* ControlledPawn = AIController->GetPawn();
 
-	//using actual class instead of auto
+	//casting this functionality to our patrolling guard class, which restrains this function
+	//to only work on the patrolling guard class AT THE MOMENT
+	APatrollingGuardToBeDeletedCLASS* PatrollingGuard = Cast<APatrollingGuardToBeDeletedCLASS>(ControlledPawn);
+
+	//patrol points is now a TArray that contains the 'actor' target points which are our patrol points!
+	TArray<AActor*> PatrolPoints = PatrollingGuard->PatrolPointsCPP;
+
+
+	///Setting our next waypoint
+	//Grabbing the owning component and getting the blackboard component from it 
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 
-	//using int32 instead of auto
 	//grab owner blackboard component, grab the Index which we declared in our header file, and store it inside indexfinder
 	int32 IndexFinder = BlackboardComponent->GetValueAsInt(Index.SelectedKeyName);
 	
+	//Going into our Blackboard component and using our UPROPERTY's selected key name, we set the value
+	//of the next index to whatever our IndexFinder is, this DOES NOT increment the value
+	BlackboardComponent->SetValueAsObject(WaypointIndex.SelectedKeyName, PatrolPoints[IndexFinder]);
+
+	//TODO protect against empty patrol routes
+
+
 	UE_LOG(LogTemp, Warning, TEXT("Waypoint index: %i"), IndexFinder)
 	return EBTNodeResult::Succeeded;
 }

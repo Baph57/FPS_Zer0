@@ -21,4 +21,7 @@ protected:
 	//creates a new key in blackboard called "Index"
 	UPROPERTY(EditAnywhere, Category = "Custom Blackboard")
 		struct FBlackboardKeySelector Index;
+
+	UPROPERTY(EditAnywhere, Category = "Custom Blackboard")
+		struct FBlackboardKeySelector WaypointIndex;
 };
