@@ -12,7 +12,7 @@ class ZER0_API AGun : public AActor
 	GENERATED_BODY()
 	
 
-	/** Gun mesh: 1st person view (seen only by self) */
+	/** Gun mesh: 1st person view (no longer seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* FP_Gun;
 
@@ -48,6 +48,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	/** Fires a projectile. */
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void OnFire();
 
 protected:
