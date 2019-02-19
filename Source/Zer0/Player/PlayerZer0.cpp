@@ -90,6 +90,8 @@ void APlayerZer0::BeginPlay()
 	{
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
+		// Bind fire event
+		InputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
 	}
 }
 
@@ -104,9 +106,6 @@ void APlayerZer0::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	// Bind fire event
-	//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerZer0::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);

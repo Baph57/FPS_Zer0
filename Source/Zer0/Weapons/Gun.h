@@ -47,12 +47,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/** Fires a projectile. */
+	void OnFire();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	/** Fires a projectile. */
-	void OnFire();
 
 	// APawn interface
 	//virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
