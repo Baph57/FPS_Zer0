@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Zer0Character.generated.h"
+#include "PlayerZer0.generated.h"
 
 class UInputComponent;
 
 UCLASS(config=Game)
-class AZer0Character : public ACharacter
+class APlayerZer0 : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -46,7 +46,7 @@ class AZer0Character : public ACharacter
 	class UMotionControllerComponent* L_MotionController;
 
 public:
-	AZer0Character();
+	APlayerZer0();
 
 protected:
 	virtual void BeginPlay();
@@ -66,7 +66,7 @@ public:
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
-	TSubclassOf<class AZer0Projectile> ProjectileClass;
+	TSubclassOf<class ABallisticsProjectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)

@@ -1,7 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
-#include "Zer0Character.h"
-#include "Zer0Projectile.h"
+#include "PlayerZer0.h"
+#include "../Weapons/BallisticsProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -15,9 +15,9 @@
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
 //////////////////////////////////////////////////////////////////////////
-// AZer0Character
+// APlayerZer0
 
-AZer0Character::AZer0Character()
+APlayerZer0::APlayerZer0()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
@@ -84,7 +84,7 @@ AZer0Character::AZer0Character()
 	//bUsingMotionControllers = true;
 }
 
-void AZer0Character::BeginPlay()
+void APlayerZer0::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
@@ -108,7 +108,7 @@ void AZer0Character::BeginPlay()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AZer0Character::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void APlayerZer0::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
@@ -118,27 +118,27 @@ void AZer0Character::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind fire event
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AZer0Character::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APlayerZer0::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AZer0Character::OnResetVR);
+	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APlayerZer0::OnResetVR);
 
 	// Bind movement events
-	PlayerInputComponent->BindAxis("MoveForward", this, &AZer0Character::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AZer0Character::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerZer0::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerZer0::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AZer0Character::TurnAtRate);
+	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerZer0::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AZer0Character::LookUpAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerZer0::LookUpAtRate);
 }
 
-void AZer0Character::OnFire()
+void APlayerZer0::OnFire()
 {
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -150,7 +150,7 @@ void AZer0Character::OnFire()
 			{
 				const FRotator SpawnRotation = VR_MuzzleLocation->GetComponentRotation();
 				const FVector SpawnLocation = VR_MuzzleLocation->GetComponentLocation();
-				World->SpawnActor<AZer0Projectile>(ProjectileClass, SpawnLocation, SpawnRotation);
+				World->SpawnActor<ABallisticsProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 			}
 			else
 			{
@@ -163,7 +163,7 @@ void AZer0Character::OnFire()
 				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
 				// spawn the projectile at the muzzle
-				World->SpawnActor<AZer0Projectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+				World->SpawnActor<ABallisticsProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
 			}
 		}
 	}
@@ -186,12 +186,12 @@ void AZer0Character::OnFire()
 	}
 }
 
-void AZer0Character::OnResetVR()
+void APlayerZer0::OnResetVR()
 {
 	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
 }
 
-void AZer0Character::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void APlayerZer0::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == true)
 	{
@@ -207,7 +207,7 @@ void AZer0Character::BeginTouch(const ETouchIndex::Type FingerIndex, const FVect
 	TouchItem.bMoved = false;
 }
 
-void AZer0Character::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
+void APlayerZer0::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
 {
 	if (TouchItem.bIsPressed == false)
 	{
@@ -219,7 +219,7 @@ void AZer0Character::EndTouch(const ETouchIndex::Type FingerIndex, const FVector
 //Commenting this section out to be consistent with FPS BP template.
 //This allows the user to turn without using the right virtual joystick
 
-//void AZer0Character::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
+//void APlayerZer0::TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location)
 //{
 //	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
 //	{
@@ -254,7 +254,7 @@ void AZer0Character::EndTouch(const ETouchIndex::Type FingerIndex, const FVector
 //	}
 //}
 
-void AZer0Character::MoveForward(float Value)
+void APlayerZer0::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -263,7 +263,7 @@ void AZer0Character::MoveForward(float Value)
 	}
 }
 
-void AZer0Character::MoveRight(float Value)
+void APlayerZer0::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
@@ -272,27 +272,27 @@ void AZer0Character::MoveRight(float Value)
 	}
 }
 
-void AZer0Character::TurnAtRate(float Rate)
+void APlayerZer0::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AZer0Character::LookUpAtRate(float Rate)
+void APlayerZer0::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-bool AZer0Character::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
+bool APlayerZer0::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
 {
 	if (FPlatformMisc::SupportsTouchInput() || GetDefault<UInputSettings>()->bUseMouseForTouch)
 	{
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AZer0Character::BeginTouch);
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &AZer0Character::EndTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &APlayerZer0::BeginTouch);
+		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &APlayerZer0::EndTouch);
 
 		//Commenting this out to be more consistent with FPS BP template.
-		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AZer0Character::TouchUpdate);
+		//PlayerInputComponent->BindTouch(EInputEvent::IE_Repeat, this, &APlayerZer0::TouchUpdate);
 		return true;
 	}
 	
