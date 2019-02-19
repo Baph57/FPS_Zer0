@@ -21,6 +21,10 @@ class APlayerZer0 : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* VR_Gun;
 
+	//Forward declaration of Gun class
+	UPROPERTY(EditDefaultsOnly, Category = Gun)
+	TSubclassOf<class AGun> GunBlueprint;
+
 	/** Location on VR gun mesh where projectiles should spawn. */
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USceneComponent* VR_MuzzleLocation;
@@ -115,5 +119,7 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
+private:
+	AGun* Gun;
 };
 
