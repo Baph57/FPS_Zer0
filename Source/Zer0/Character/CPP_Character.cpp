@@ -44,9 +44,18 @@ void ACPP_Character::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Gun blueprint missing."));
 		return;
 	}
+
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
-	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); //Attach gun mesh component to Skeleton, doing it here because the skelton is not yet created in the constructor
-	Gun->AnimInstance = Mesh1P->GetAnimInstance();
+
+	if (IsPlayerControlled())
+	{
+	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint")); 
+	}
+	else
+	{
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	}
+	Gun->AnimInstance = GetMesh()->GetAnimInstance();
 	
 	if(InputComponent!=NULL)
 	{
@@ -67,6 +76,19 @@ void ACPP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
 
+}
+
+void ACPP_Character::UnPossessed()
+{
+	Super::UnPossessed();
+	if (!ensure(Gun))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Gun not found CPP_Character.cpp || Line 86"))
+			return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Gun reattached successfully! || CPP_Character.cpp"))
+
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 }
 
 void ACPP_Character::PullTrigger()
