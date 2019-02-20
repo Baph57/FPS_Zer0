@@ -56,11 +56,11 @@ bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 		DesiredSpawnLocation,
 		DesiredSpawnLocation,
 		FQuat::Identity,
-		ECollisionChannel::ECC_Camera, // everything the camera sees / blocks the camera
+		ECollisionChannel::ECC_GameTraceChannel2, // everything the camera sees / blocks the camera
 		FCollisionShape::MakeSphere(ObjectRadius)
 	);
 	FColor ResultColor = IsCollisionDetected ? FColor::Red : FColor::Green;
-	DrawDebugSphere(GetWorld(), DesiredSpawnLocation, ObjectRadius, 100, ResultColor, true, 100);
+	DrawDebugCapsule(GetWorld(), DesiredSpawnLocation, 0, ObjectRadius, FQuat::Identity,  ResultColor, true, 100);
 	return IsCollisionDetected;
 }
 
