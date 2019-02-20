@@ -79,7 +79,7 @@ void APlayerZer0::BeginPlay()
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 	//TODO make a setter
-	Gun->AnimInstance = Mesh1P->GetAnimInstance();
+	Gun->AnimInstance1P = Mesh1P->GetAnimInstance();
 	}
 	else{UE_LOG(LogTemp, Warning, TEXT("No gun found PlayerZer0.cpp line 80")) }
 	// Show or hide the two versions of the gun based on whether or not we're using motion controllers.

@@ -40,7 +40,7 @@ ACPP_Character::ACPP_Character()
 void ACPP_Character::BeginPlay()
 {
 	Super::BeginPlay();
-	if (GunBlueprint == NULL) {
+	if (GunBlueprint == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Gun blueprint missing."));
 		return;
 	}
@@ -55,9 +55,14 @@ void ACPP_Character::BeginPlay()
 	{
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
 	}
-	Gun->AnimInstance = GetMesh()->GetAnimInstance();
+
+	//first person animation instance
+	Gun->AnimInstance1P = Mesh1P->GetAnimInstance();
+
+	//third person animation instance
+	Gun->AnimInstance3P = GetMesh()->GetAnimInstance();
 	
-	if(InputComponent!=NULL)
+	if(InputComponent != nullptr)
 	{
 		InputComponent->BindAction("Fire", IE_Pressed, this, &ACPP_Character::PullTrigger);
 	}
@@ -74,8 +79,6 @@ void ACPP_Character::Tick(float DeltaTime)
 void ACPP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
-
 }
 
 void ACPP_Character::UnPossessed()
@@ -83,7 +86,7 @@ void ACPP_Character::UnPossessed()
 	Super::UnPossessed();
 	if (!ensure(Gun))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Gun not found CPP_Character.cpp || Line 86"))
+	UE_LOG(LogTemp, Warning, TEXT("Gun not found CPP_Character.cpp || Line 86"))
 			return;
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Gun reattached successfully! || CPP_Character.cpp"))

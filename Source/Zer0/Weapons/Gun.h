@@ -26,7 +26,18 @@ public:
 
 	//Animation instance forward declaration
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
-		class UAnimInstance* AnimInstance; 
+	class UAnimInstance* AnimInstance1P; 
+
+	//Animation instance forward declaration
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	class UAnimInstance* AnimInstance3P;
+
+	/** AnimMontage to play each time we fire */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class UAnimMontage* FireAnimation1P;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	class UAnimMontage* FireAnimation3P;
 
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
@@ -35,10 +46,6 @@ public:
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* FireSound;
-
-	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimMontage* FireAnimation;
 
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
