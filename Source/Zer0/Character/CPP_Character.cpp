@@ -50,7 +50,7 @@ void ACPP_Character::BeginPlay()
 	
 	if(InputComponent!=NULL)
 	{
-		InputComponent->BindAction("Fire", IE_Pressed, this, &ACPP_Character::Fire);
+		InputComponent->BindAction("Fire", IE_Pressed, this, &ACPP_Character::PullTrigger);
 	}
 }
 
@@ -69,7 +69,7 @@ void ACPP_Character::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
-void ACPP_Character::Fire()
+void ACPP_Character::PullTrigger()
 {
 	Gun->OnFire();
 }
