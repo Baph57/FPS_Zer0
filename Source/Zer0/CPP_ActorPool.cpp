@@ -14,15 +14,36 @@ UCPP_ActorPool::UCPP_ActorPool()
 
 AActor * UCPP_ActorPool::Checkout()
 {
-	return nullptr;
+	if (ensure(ActorPool.Num() == 0))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("error line 19 ActorPool"), *GetName());
+		return nullptr;
+	}
+	return ActorPool.Pop();
 }
 
 void UCPP_ActorPool::ReturnPoolActors(AActor * ActorToReturn)
 {
+	if (ensure(ActorToReturn == nullptr)) 
+	{
+	UE_LOG(LogTemp, Error, TEXT("[%s] Actor Returned: null."), *GetName())
+	}
+	else
+	{
+		AddPoolActors(ActorToReturn);
+	}
 
 }
 
 void UCPP_ActorPool::AddPoolActors(AActor * ActorToAdd)
 {
+	if (ensure(ActorToAdd == nullptr)) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%s] added null actor"), *GetName())
+			return;
+	}
+	ActorPool.Push(ActorToAdd);
 
+
+	ReturnPoolActors(ActorToAdd);
 }

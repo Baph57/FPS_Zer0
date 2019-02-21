@@ -11,7 +11,8 @@ ACPP_Tile::ACPP_Tile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	MinimumSpawningExtent = FVector(0, -2000, 0);
+	MaximumSpawningExtent = FVector(4000, 2000, 0);
 }
 
 void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
@@ -43,6 +44,13 @@ void ACPP_Tile::BeginPlay()
 	CastSphere(GetActorLocation() + FVector(0, 0, 1000), 400);
 }
 
+void ACPP_Tile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	ActorPool->ReturnPoolActors(NavMeshBoundsVolume);
+}
+
 // Called every frame
 void ACPP_Tile::Tick(float DeltaTime)
 {
@@ -52,9 +60,7 @@ void ACPP_Tile::Tick(float DeltaTime)
 
 bool ACPP_Tile::GetEmptyLocation(FVector& OutLocation, float ObjectRadius)
 {
-	FVector Min(0, -2000, 0);
-	FVector Max(4000, 2000, 0);
-	FBox LevelBoundaries(Min, Max);
+	FBox LevelBoundaries(MinimumSpawningExtent, MaximumSpawningExtent);
 	const int32 MAX_ATTEMPTS = 100;
 	for (size_t i = 0; i < MAX_ATTEMPTS; i++)
 	{
@@ -100,7 +106,20 @@ bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 
 void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
 {
-	ActorPool = InPool;
 	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
+	ActorPool = InPool;
+
+	PositionNavMeshBoundsVolume();
+}
+
+void ACPP_Tile::PositionNavMeshBoundsVolume()
+{
+	NavMeshBoundsVolume = ActorPool->Checkout();
+	if (ensure(NavMeshBoundsVolume == nullptr))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Tile line 114, cpp || Not enough actors in pool"))
+			return;
+	}
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
 }
 

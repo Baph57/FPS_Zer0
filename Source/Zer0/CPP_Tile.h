@@ -32,6 +32,20 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//endgame
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	UPROPERTY(EditDefaultsOnly, Category = Custom)
+	FVector MinimumSpawningExtent;
+	
+
+
+	UPROPERTY(EditDefaultsOnly, Category = Custom)
+		FVector MaximumSpawningExtent;
+
+
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -39,10 +53,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Custom)
 		void SetActorPool(UCPP_ActorPool* ActorPool);
 
+
 private:
 	//member variable for getting empty location
 	bool GetEmptyLocation(FVector& OutLocation, float ObjectRadius);
 
+	
+	void PositionNavMeshBoundsVolume();
+	
+	
 	//The actual action of placing the actor
 	void PlaceActor(
 		TSubclassOf<AActor> ActorToSpawn, 
@@ -56,4 +75,6 @@ private:
 
 	UCPP_ActorPool* ActorPool;
 
+
+	AActor* NavMeshBoundsVolume;
 };

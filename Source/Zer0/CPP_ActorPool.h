@@ -19,4 +19,8 @@ public:
 	AActor* Checkout(); //state of pool?
 	void ReturnPoolActors(AActor* ActorToReturn);
 	void AddPoolActors(AActor* ActorToAdd);
+
+
+private:
+	TArray<AActor*>ActorPool;
 };
