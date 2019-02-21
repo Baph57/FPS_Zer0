@@ -99,6 +99,11 @@ void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& Spa
 	SpawnedPawn->Tags.Add(FName("Enemy"));
 }
 
+template<class T>
+void ACPP_Tile::RandomlyPlaceActors(TSubclassOf<T> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
+{
+}
+
 TArray<FSpawnPosition> ACPP_Tile::RandomizedSpawnPositions(const int32 &MinSpawn, const int32 &MaxSpawn, float MinScale, float MaxScale, float ObjectRadius)
 {
 

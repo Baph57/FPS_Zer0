@@ -106,6 +106,18 @@ private:
 
 	AActor* NavMeshBoundsVolume;
 
+	template<class T>
+	void RandomlyPlaceActors(
+		TSubclassOf<T> ActorToSpawn,
+		int32 MinSpawn = 1,
+		int32 MaxSpawn = 1,
+		float ObjectRadius = 500,
+		float MinScale = 1,
+		float MaxScale = 1
+	);
+
 
 	void PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition);
 };
+
+
