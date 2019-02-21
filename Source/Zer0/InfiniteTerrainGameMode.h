@@ -15,5 +15,16 @@ class ZER0_API AInfiniteTerrainGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-		AInfiniteTerrainGameMode();
+		
+	//constructor
+	AInfiniteTerrainGameMode();
+
+
+	//UFUNCTION(BlueprintCallable, Category = Custom)
+	//void PopulateBoundsVolumePool();
+
+
+//private:
+	//void AddToPool(ANavMeshBoundsVolume *VolumeToAdd);
+
 };
