@@ -6,6 +6,18 @@
 #include "GameFramework/Actor.h"
 #include "CPP_Tile.generated.h"
 
+
+USTRUCT()
+struct FSpawnPosition
+{
+	GENERATED_USTRUCT_BODY()
+
+	FVector Location;
+	float Rotation;
+	float Scale;
+
+};
+
 class UCPP_ActorPool;
 
 UCLASS()
@@ -26,6 +38,22 @@ public:
 		float ObjectRadius = 500,
 		float MinScale = 1,
 		float MaxScale = 1
+	);
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+		void PlaceAiPawnsInWorld(
+			TSubclassOf<APawn> PawnToSpawn,
+			int32 MinSpawn = 1,
+			int32 MaxSpawn = 1,
+			float ObjectRadius = 500
+		);
+
+	TArray<FSpawnPosition> RandomizedSpawnPositions(
+		const int32 &MinSpawn, 
+		const int32 &MaxSpawn, 
+		float MinScale, 
+		float MaxScale, 
+		float ObjectRadius
 	);
 
 protected:
@@ -67,12 +95,7 @@ private:
 	
 	
 	//The actual action of placing the actor
-	void PlaceActor(
-		TSubclassOf<AActor> ActorToSpawn, 
-		FVector DesiredSpawnPoint, 
-		float Rotation,
-		float Scale
-	);
+	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& DesiredSpawnLocation);
 
 	//returns a boolean value based upon whether the location is valid to spawn at or not
 	bool CastSphere(FVector DesiredSpawnLocation, float ObjectRadius);

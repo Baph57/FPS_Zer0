@@ -24,19 +24,39 @@ ACPP_Tile::ACPP_Tile()
 
 void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
 {
+	
+	TArray<FSpawnPosition> SpawnPositions = RandomizedSpawnPositions(
+		MinSpawn, 
+		MaxSpawn, 
+		ObjectRadius, 
+		MinScale, 
+		MaxScale);
+
+	//really needs better naming conventions
+	for (FSpawnPosition SpawnPosition : SpawnPositions)
+	{ 
+		PlaceActor(ActorToSpawn, SpawnPosition);
+	}
+	
+}
+
+TArray<FSpawnPosition> ACPP_Tile::RandomizedSpawnPositions(const int32 &MinSpawn, const int32 &MaxSpawn, float MinScale, float MaxScale, float ObjectRadius)
+{
+
+	TArray<FSpawnPosition> SpawnPositions;
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
-		FVector SpawnPoint;
-		float RandomScale = FMath::RandRange(MinScale, MaxScale);
-		bool FoundLocation = GetEmptyLocation(SpawnPoint, ObjectRadius * RandomScale);
+		FSpawnPosition DesiredSpawnPositions;
+		DesiredSpawnPositions.Scale = FMath::RandRange(MinScale, MaxScale);
+		bool FoundLocation = GetEmptyLocation(DesiredSpawnPositions.Location, ObjectRadius * DesiredSpawnPositions.Scale);
 		if (FoundLocation) //is empty
-			{
-			float RandomRotation = FMath::RandRange(-180.f, 180.f);
-			PlaceActor(ActorToSpawn, SpawnPoint, RandomRotation, RandomScale);
-			}
-	//FVector RandomSpawnLocation = FMath::RandPointInBox(LevelBoundaries);
+		{
+			DesiredSpawnPositions.Rotation = FMath::RandRange(-180.f, 180.f);
+			SpawnPositions.Add(DesiredSpawnPositions);
+		}
 	}
+	return SpawnPositions;
 }
 
 // Called when the game starts or when spawned
@@ -44,11 +64,6 @@ void ACPP_Tile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//TODO remove
-	//CastSphere(GetActorLocation(), 400);
-
-	//TODO remove
-	//CastSphere(GetActorLocation() + FVector(0, 0, 1000), 400);
 }
 
 void ACPP_Tile::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -81,16 +96,16 @@ bool ACPP_Tile::GetEmptyLocation(FVector& OutLocation, float ObjectRadius)
 	return false;
 }
 
-void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector DesiredSpawnPoint, float Rotation, float Scale)
+void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& DesiredSpawnLocation)
 {
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
-	SpawnedActor->SetActorRelativeLocation(DesiredSpawnPoint);
+	SpawnedActor->SetActorRelativeLocation(DesiredSpawnLocation.Location);
 	//this is what attaches the actors to the random location
 	SpawnedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 	//setting rotation of actor
-	SpawnedActor->SetActorRotation(FRotator(0, Rotation, 0));
+	SpawnedActor->SetActorRotation(FRotator(0, DesiredSpawnLocation.Rotation, 0));
 	//adjusting FVector of actor scale on spawn
-	SpawnedActor->SetActorScale3D(FVector(Scale));
+	SpawnedActor->SetActorScale3D(FVector(DesiredSpawnLocation.Scale));
 }
 
 bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
