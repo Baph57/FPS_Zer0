@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "CPP_Tile.generated.h"
 
+class UCPP_ActorPool;
+
 UCLASS()
 class ZER0_API ACPP_Tile : public AActor
 {
@@ -34,6 +36,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = Custom)
+		void SetActorPool(UCPP_ActorPool* ActorPool);
+
 private:
 	//member variable for getting empty location
 	bool GetEmptyLocation(FVector& OutLocation, float ObjectRadius);
@@ -48,5 +53,7 @@ private:
 
 	//returns a boolean value based upon whether the location is valid to spawn at or not
 	bool CastSphere(FVector DesiredSpawnLocation, float ObjectRadius);
+
+	UCPP_ActorPool* ActorPool;
 
 };

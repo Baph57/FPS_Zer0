@@ -4,6 +4,7 @@
 #include "Engine/World.h"
 #include "Engine/EngineTypes.h"
 #include "Public/DrawDebugHelpers.h"
+#include "CPP_ActorPool.h"
 
 // Sets default values
 ACPP_Tile::ACPP_Tile()
@@ -95,5 +96,11 @@ bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 	//FColor ResultColor = IsCollisionDetected ? FColor::Red : FColor::Green;
 	//DrawDebugCapsule(GetWorld(), GlobalLocationConversion, 0, ObjectRadius, FQuat::Identity,  ResultColor, true, 100);
 	return !IsCollisionDetected;
+}
+
+void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
+	ActorPool = InPool;
 }
 

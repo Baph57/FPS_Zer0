@@ -9,7 +9,11 @@
 /**
  * 
  */
+
+
+class UCPP_ActorPool;
 class ANavMeshBoundsVolume;
+
 UCLASS()
 class ZER0_API AInfiniteTerrainGameMode : public AGameModeBase
 {
@@ -24,8 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Custom)
 	void PopulateBoundsVolumePool();
 
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Custom)
+	UCPP_ActorPool* NavMeshBoundsVolumePool;
 
-//private:
-	void AddToPool(ANavMeshBoundsVolume *VolumeToAdd);
+
+private:
+	void AddToPool(class ANavMeshBoundsVolume *VolumeToAdd);
 
 };

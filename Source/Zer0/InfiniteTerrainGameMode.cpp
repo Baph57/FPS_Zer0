@@ -6,16 +6,11 @@
 #include "UObject/ConstructorHelpers.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
 #include "EngineUtils.h"
+#include "CPP_ActorPool.h"
 
 AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
-	: Super()
 {
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnClassFinder(TEXT("/Game/Player/Behaviour/BP_FirstPersonCharacter"));
-	DefaultPawnClass = PlayerPawnClassFinder.Class;
-
-	// use our custom HUD class
-	HUDClass = AZer0HUD::StaticClass();
+	NavMeshBoundsVolumePool = CreateDefaultSubobject<UCPP_ActorPool>(FName("NavMesh Bounds Volume Pool"));
 }
 
 void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
