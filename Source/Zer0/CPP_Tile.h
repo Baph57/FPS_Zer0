@@ -67,15 +67,14 @@ protected:
 
 
 	UPROPERTY(EditDefaultsOnly, Category = Custom)
-		FVector NavigationBoundsOffset;
+	FVector NavigationBoundsOffset;
 
 	UPROPERTY(EditDefaultsOnly, Category = Custom)
 	FVector MinimumSpawningExtent;
 	
 
-
 	UPROPERTY(EditDefaultsOnly, Category = Custom)
-		FVector MaximumSpawningExtent;
+	FVector MaximumSpawningExtent;
 
 
 
@@ -97,7 +96,7 @@ private:
 	
 	
 	//The actual action of placing the actor
-	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& DesiredSpawnLocation);
+	void PlaceActor(TSubclassOf<AActor> ActorToSpawn, FSpawnPosition& DesiredSpawnLocation);
 
 	//returns a boolean value based upon whether the location is valid to spawn at or not
 	bool CastSphere(FVector DesiredSpawnLocation, float ObjectRadius);
@@ -108,5 +107,5 @@ private:
 	AActor* NavMeshBoundsVolume;
 
 
-	void PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, const FSpawnPosition SpawnPosition);
+	void PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition);
 };

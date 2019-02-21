@@ -22,6 +22,30 @@ ACPP_Tile::ACPP_Tile()
 
 }
 
+void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
+{
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
+	ActorPool = InPool;
+
+	PositionNavMeshBoundsVolume();
+}
+
+void ACPP_Tile::PositionNavMeshBoundsVolume()
+{
+	NavMeshBoundsVolume = ActorPool->Checkout();
+	if (NavMeshBoundsVolume == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 120|| [%s]"), *GetName())
+			return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
+
+		NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
+	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
+}
+
+
 void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
 {
 	
@@ -59,9 +83,13 @@ void ACPP_Tile::PlaceAiPawnsInWorld(TSubclassOf<APawn> PawnToSpawn, int32 MinSpa
 
 }
 
-void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, const FSpawnPosition SpawnPosition) 
+void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition) 
 {
 	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn);
+	if (SpawnedPawn == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Line66 || CPP_Tile.cpp || No Pawn"))
+		return;
+	}
 	SpawnedPawn->SetActorRelativeLocation(SpawnPosition.Location);
 	//this is what attaches the actors to the random location
 	SpawnedPawn->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
@@ -127,7 +155,7 @@ bool ACPP_Tile::GetEmptyLocation(FVector& OutLocation, float ObjectRadius)
 	return false;
 }
 
-void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, const FSpawnPosition& DesiredSpawnLocation)
+void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FSpawnPosition& DesiredSpawnLocation) 
 {
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
 	SpawnedActor->SetActorRelativeLocation(DesiredSpawnLocation.Location);
@@ -157,26 +185,6 @@ bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 	return !IsCollisionDetected;
 }
 
-void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
-{
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
-	ActorPool = InPool;
 
-	PositionNavMeshBoundsVolume();
-}
 
-void ACPP_Tile::PositionNavMeshBoundsVolume()
-{
-	NavMeshBoundsVolume = ActorPool->Checkout();
-	if (NavMeshBoundsVolume == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 120|| [%s]"), *GetName())
-			return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
-	
-	NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
-	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
-}
 
