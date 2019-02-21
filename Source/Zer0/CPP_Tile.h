@@ -108,7 +108,7 @@ private:
 
 	template<class T>
 	void RandomlyPlaceActors(
-		TSubclassOf<T> ActorToSpawn,
+		TSubclassOf<T> ToSpawn,
 		int32 MinSpawn = 1,
 		int32 MaxSpawn = 1,
 		float ObjectRadius = 500,
@@ -117,7 +117,7 @@ private:
 	);
 
 
-	void PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition);
+	void PlaceActor(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition);
 };
 
 

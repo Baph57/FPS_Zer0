@@ -46,48 +46,40 @@ void ACPP_Tile::PositionNavMeshBoundsVolume()
 }
 
 
-void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
+template<class T>
+void ACPP_Tile::RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
 {
-	
-	TArray<FSpawnPosition> SpawnPositions = RandomizedSpawnPositions(
-		MinSpawn, 
-		MaxSpawn, 
-		ObjectRadius, 
-		MinScale, 
-		MaxScale);
 
-	//really needs better naming conventions
-	for (FSpawnPosition SpawnPosition : SpawnPositions)
-	{ 
-		PlaceActor(ActorToSpawn, SpawnPosition);
-	}
-	
-}
-
-void ACPP_Tile::PlaceAiPawnsInWorld(TSubclassOf<APawn> PawnToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius)
-{
-	
-	TArray<FSpawnPosition> SpawnPositions = RandomizedSpawnPositions(
-		MinSpawn,
-		MaxSpawn,
-		ObjectRadius,
-		1,
-		1
-		);
-
-	//really needs better naming conventions
-	for (FSpawnPosition SpawnPosition : SpawnPositions)
+	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
-		PlaceAiPawns(PawnToSpawn, SpawnPosition);
-	}
+		FSpawnPosition DesiredSpawnPositions;
+		DesiredSpawnPositions.Scale = FMath::RandRange(MinScale, MaxScale);
+		bool FoundLocation = GetEmptyLocation(DesiredSpawnPositions.Location, ObjectRadius * DesiredSpawnPositions.Scale);
+		if (FoundLocation) //is empty
+		{
+			DesiredSpawnPositions.Rotation = FMath::RandRange(-180.f, 180.f);
+			PlaceActor(ToSpawn, DesiredSpawnPositions);
 
+		}
+	}
 }
 
-void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition) 
+void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
+{
+	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, ObjectRadius, MinScale, MaxScale);
+}
+
+void ACPP_Tile::PlaceAiPawnsInWorld(TSubclassOf<APawn> ToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius)
+{
+	RandomlyPlaceActors(ToSpawn, MinSpawn, MaxSpawn, ObjectRadius, 1, 1);
+}
+
+void ACPP_Tile::PlaceActor(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition)
 {
 	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn);
 	if (SpawnedPawn == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Line66 || CPP_Tile.cpp || No Pawn"))
+		UE_LOG(LogTemp, Warning, TEXT("Line82 || CPP_Tile.cpp || No Pawn"))
 		return;
 	}
 	SpawnedPawn->SetActorRelativeLocation(SpawnPosition.Location);
@@ -99,29 +91,7 @@ void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& Spa
 	SpawnedPawn->Tags.Add(FName("Enemy"));
 }
 
-template<class T>
-void ACPP_Tile::RandomlyPlaceActors(TSubclassOf<T> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
-{
-}
 
-TArray<FSpawnPosition> ACPP_Tile::RandomizedSpawnPositions(const int32 &MinSpawn, const int32 &MaxSpawn, float MinScale, float MaxScale, float ObjectRadius)
-{
-
-	TArray<FSpawnPosition> SpawnPositions;
-	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
-	for (size_t i = 0; i < NumberToSpawn; i++)
-	{
-		FSpawnPosition DesiredSpawnPositions;
-		DesiredSpawnPositions.Scale = FMath::RandRange(MinScale, MaxScale);
-		bool FoundLocation = GetEmptyLocation(DesiredSpawnPositions.Location, ObjectRadius * DesiredSpawnPositions.Scale);
-		if (FoundLocation) //is empty
-		{
-			DesiredSpawnPositions.Rotation = FMath::RandRange(-180.f, 180.f);
-			SpawnPositions.Add(DesiredSpawnPositions);
-		}
-	}
-	return SpawnPositions;
-}
 
 // Called when the game starts or when spawned
 void ACPP_Tile::BeginPlay()
@@ -163,6 +133,10 @@ bool ACPP_Tile::GetEmptyLocation(FVector& OutLocation, float ObjectRadius)
 void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FSpawnPosition& DesiredSpawnLocation) 
 {
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
+	if (SpawnedActor == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("Line82 || CPP_Tile.cpp || No Pawn"))
+			return;
+	}
 	SpawnedActor->SetActorRelativeLocation(DesiredSpawnLocation.Location);
 	//this is what attaches the actors to the random location
 	SpawnedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
