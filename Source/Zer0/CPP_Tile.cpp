@@ -35,10 +35,10 @@ void ACPP_Tile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//example confirmed spherecast hit
+	//TODO remove
 	CastSphere(GetActorLocation(), 400);
 
-	//example sphere cast clear
+	//TODO remove
 	CastSphere(GetActorLocation() + FVector(0, 0, 1000), 400);
 }
 
