@@ -4,7 +4,7 @@
 #include "Zer0HUD.h"
 #include "Player/PlayerZer0.h"
 #include "UObject/ConstructorHelpers.h"
-
+#include "NavMesh/NavMeshBoundsVolume.h"
 
 AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
 	: Super()
@@ -15,4 +15,13 @@ AInfiniteTerrainGameMode::AInfiniteTerrainGameMode()
 
 	// use our custom HUD class
 	HUDClass = AZer0HUD::StaticClass();
+}
+
+void AInfiniteTerrainGameMode::PopulateBoundsVolumePool()
+{
+
+}
+
+void AInfiniteTerrainGameMode::AddToPool(ANavMeshBoundsVolume * VolumeToAdd)
+{
 }
