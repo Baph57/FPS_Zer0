@@ -5,15 +5,21 @@
 #include "Engine/EngineTypes.h"
 #include "Public/DrawDebugHelpers.h"
 #include "CPP_ActorPool.h"
-#include "NavigationSystem/Public/NavigationSystem.h"
+#include "NavigationSystem.h"
+
 
 // Sets default values
 ACPP_Tile::ACPP_Tile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	NavigationBoundsOffset = FVector(2000, 0, 0);
+
 	MinimumSpawningExtent = FVector(0, -2000, 0);
 	MaximumSpawningExtent = FVector(4000, 2000, 0);
+
+
 }
 
 void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
@@ -39,10 +45,10 @@ void ACPP_Tile::BeginPlay()
 	Super::BeginPlay();
 	
 	//TODO remove
-	CastSphere(GetActorLocation(), 400);
+	//CastSphere(GetActorLocation(), 400);
 
 	//TODO remove
-	CastSphere(GetActorLocation() + FVector(0, 0, 1000), 400);
+	//CastSphere(GetActorLocation() + FVector(0, 0, 1000), 400);
 }
 
 void ACPP_Tile::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -116,14 +122,15 @@ void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
 void ACPP_Tile::PositionNavMeshBoundsVolume()
 {
 	NavMeshBoundsVolume = ActorPool->Checkout();
-	if (ensure(NavMeshBoundsVolume == nullptr))
+	if (NavMeshBoundsVolume == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 120|| [%s]"), *GetName())
 			return;
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
-	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
+	
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
 	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
 }
 

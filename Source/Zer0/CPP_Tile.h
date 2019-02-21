@@ -35,6 +35,10 @@ protected:
 	//endgame
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+
+	UPROPERTY(EditDefaultsOnly, Category = Custom)
+		FVector NavigationBoundsOffset;
+
 	UPROPERTY(EditDefaultsOnly, Category = Custom)
 	FVector MinimumSpawningExtent;
 	
