@@ -43,7 +43,4 @@ void UCPP_ActorPool::AddPoolActors(AActor * ActorToAdd)
 			return;
 	}
 	ActorPool.Push(ActorToAdd);
-
-
-	ReturnPoolActors(ActorToAdd);
 }

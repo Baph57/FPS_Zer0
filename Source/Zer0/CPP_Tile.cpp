@@ -117,9 +117,11 @@ void ACPP_Tile::PositionNavMeshBoundsVolume()
 	NavMeshBoundsVolume = ActorPool->Checkout();
 	if (ensure(NavMeshBoundsVolume == nullptr))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Tile line 114, cpp || Not enough actors in pool"))
+		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 120|| [%s]"), *GetName())
 			return;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
 	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
 }
 
