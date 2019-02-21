@@ -30,7 +30,7 @@ public:
 	ACPP_Tile();
 
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, Category = Custom)
 	void PlaceActorsInWorld(
 		TSubclassOf<AActor> ActorToSpawn, 
 		int32 MinSpawn = 1,
@@ -38,15 +38,17 @@ public:
 		float ObjectRadius = 500,
 		float MinScale = 1,
 		float MaxScale = 1
-	);
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-		void PlaceAiPawnsInWorld(
-			TSubclassOf<APawn> PawnToSpawn,
-			int32 MinSpawn = 1,
-			int32 MaxSpawn = 1,
-			float ObjectRadius = 500
 		);
+
+	UFUNCTION(BlueprintCallable, Category = Custom)
+	void PlaceAiPawnsInWorld(
+		TSubclassOf<APawn> PawnToSpawn,
+		int32 MinSpawn = 1,
+		int32 MaxSpawn = 1,
+		float ObjectRadius = 500
+		);
+
+
 
 	TArray<FSpawnPosition> RandomizedSpawnPositions(
 		const int32 &MinSpawn, 
@@ -104,4 +106,7 @@ private:
 
 
 	AActor* NavMeshBoundsVolume;
+
+
+	void PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, const FSpawnPosition SpawnPosition);
 };

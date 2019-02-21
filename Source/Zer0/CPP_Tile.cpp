@@ -40,6 +40,37 @@ void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSp
 	
 }
 
+void ACPP_Tile::PlaceAiPawnsInWorld(TSubclassOf<APawn> PawnToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius)
+{
+	
+	TArray<FSpawnPosition> SpawnPositions = RandomizedSpawnPositions(
+		MinSpawn,
+		MaxSpawn,
+		ObjectRadius,
+		1,
+		1
+		);
+
+	//really needs better naming conventions
+	for (FSpawnPosition SpawnPosition : SpawnPositions)
+	{
+		PlaceAiPawns(PawnToSpawn, SpawnPosition);
+	}
+
+}
+
+void ACPP_Tile::PlaceAiPawns(TSubclassOf<APawn> PawnToSpawn, const FSpawnPosition SpawnPosition) 
+{
+	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn);
+	SpawnedPawn->SetActorRelativeLocation(SpawnPosition.Location);
+	//this is what attaches the actors to the random location
+	SpawnedPawn->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	//setting rotation of actor
+	SpawnedPawn->SetActorRotation(FRotator(0, SpawnPosition.Rotation, 0));
+	SpawnedPawn->SpawnDefaultController();
+	SpawnedPawn->Tags.Add(FName("Enemy"));
+}
+
 TArray<FSpawnPosition> ACPP_Tile::RandomizedSpawnPositions(const int32 &MinSpawn, const int32 &MaxSpawn, float MinScale, float MaxScale, float ObjectRadius)
 {
 
