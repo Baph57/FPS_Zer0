@@ -77,7 +77,8 @@ void ACPP_Tile::PlaceAiPawnsInWorld(TSubclassOf<APawn> ToSpawn, int32 MinSpawn, 
 
 void ACPP_Tile::PlaceActor(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& SpawnPosition)
 {
-	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn);
+	FRotator SpawnRotation = FRotator(0, SpawnPosition.Rotation, 0);
+	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn, SpawnPosition.Location, SpawnRotation);
 	if (SpawnedPawn == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Line82 || CPP_Tile.cpp || No Pawn"))
 		return;
@@ -103,8 +104,10 @@ void ACPP_Tile::BeginPlay()
 void ACPP_Tile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
+	if(ActorPool != nullptr && NavMeshBoundsVolume != nullptr)
+	{
 	ActorPool->ReturnPoolActors(NavMeshBoundsVolume);
+	}
 }
 
 // Called every frame
