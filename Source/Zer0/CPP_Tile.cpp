@@ -100,7 +100,7 @@ bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 
 void ACPP_Tile::SetActorPool(UCPP_ActorPool* InPool)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
 	ActorPool = InPool;
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Setting Pool %s"), *(this->GetName()), *(InPool->GetName()));
 }
 
