@@ -40,12 +40,13 @@ ACPP_Character::ACPP_Character()
 void ACPP_Character::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
+	
 	if (GunBlueprint == nullptr) {
 		UE_LOG(LogTemp, Warning, TEXT("Gun blueprint missing."));
 		return;
 	}
-
-	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
 
 	if (IsPlayerControlled())
 	{

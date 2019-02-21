@@ -13,19 +13,20 @@ ACPP_Tile::ACPP_Tile()
 
 }
 
-void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn)
+void ACPP_Tile::PlaceActorsInWorld(TSubclassOf<AActor> ActorToSpawn, int32 MinSpawn, int32 MaxSpawn, float ObjectRadius, float MinScale, float MaxScale)
 {
-	FVector Min(0, -2000, 0);
-	FVector Max(4000, 2000, 0);
-	FBox LevelBoundaries(Min, Max);
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
-	FVector RandomSpawnLocation = FMath::RandPointInBox(LevelBoundaries);
-	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
-	SpawnedActor->SetActorRelativeLocation(RandomSpawnLocation);
-	//this is what attaches the actors to the random location
-	SpawnedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		FVector SpawnPoint;
+		float RandomScale = FMath::RandRange(MinScale, MaxScale);
+		bool FoundLocation = GetEmptyLocation(SpawnPoint, ObjectRadius * RandomScale);
+		if (FoundLocation) //is empty
+			{
+			float RandomRotation = FMath::RandRange(-180.f, 180.f);
+			PlaceActor(ActorToSpawn, SpawnPoint, RandomRotation, RandomScale);
+			}
+	//FVector RandomSpawnLocation = FMath::RandPointInBox(LevelBoundaries);
 	}
 }
 
@@ -48,19 +49,51 @@ void ACPP_Tile::Tick(float DeltaTime)
 
 }
 
+bool ACPP_Tile::GetEmptyLocation(FVector& OutLocation, float ObjectRadius)
+{
+	FVector Min(0, -2000, 0);
+	FVector Max(4000, 2000, 0);
+	FBox LevelBoundaries(Min, Max);
+	const int32 MAX_ATTEMPTS = 100;
+	for (size_t i = 0; i < MAX_ATTEMPTS; i++)
+	{
+		FVector DesiredSpawnLocation = FMath::RandPointInBox(LevelBoundaries);
+		if(CastSphere(DesiredSpawnLocation, ObjectRadius))
+		{
+			OutLocation = DesiredSpawnLocation;
+			return true;
+		}
+	}
+	return false;
+}
+
+void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FVector DesiredSpawnPoint, float Rotation, float Scale)
+{
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
+	SpawnedActor->SetActorRelativeLocation(DesiredSpawnPoint);
+	//this is what attaches the actors to the random location
+	SpawnedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	//setting rotation of actor
+	SpawnedActor->SetActorRotation(FRotator(0, Rotation, 0));
+	//adjusting FVector of actor scale on spawn
+	SpawnedActor->SetActorScale3D(FVector(Scale));
+}
+
 bool ACPP_Tile::CastSphere(FVector DesiredSpawnLocation, float ObjectRadius)
 {
 	FHitResult DesiredHitResult;
+	//we are using position instead of vector because vector can account for many things beyond positon
+	FVector GlobalLocationConversion = ActorToWorld().TransformPosition(DesiredSpawnLocation);
 	bool IsCollisionDetected = GetWorld()->SweepSingleByChannel(
 		DesiredHitResult,
-		DesiredSpawnLocation,
-		DesiredSpawnLocation,
+		GlobalLocationConversion,
+		GlobalLocationConversion,
 		FQuat::Identity,
 		ECollisionChannel::ECC_GameTraceChannel2, // everything the camera sees / blocks the camera
 		FCollisionShape::MakeSphere(ObjectRadius)
 	);
-	FColor ResultColor = IsCollisionDetected ? FColor::Red : FColor::Green;
-	DrawDebugCapsule(GetWorld(), DesiredSpawnLocation, 0, ObjectRadius, FQuat::Identity,  ResultColor, true, 100);
-	return IsCollisionDetected;
+	//FColor ResultColor = IsCollisionDetected ? FColor::Red : FColor::Green;
+	//DrawDebugCapsule(GetWorld(), GlobalLocationConversion, 0, ObjectRadius, FQuat::Identity,  ResultColor, true, 100);
+	return !IsCollisionDetected;
 }
 

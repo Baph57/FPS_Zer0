@@ -28,7 +28,7 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 
 	if (PatrolledPoints.Num() == 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("A guard is missing patrol points!"))
+		UE_LOG(LogTemp, Warning, TEXT("A guard is missing patrol points! ChooseNextWaypointCLASS Line 31"))
 	}
 
 
@@ -64,6 +64,6 @@ EBTNodeResult::Type UChooseNextWaypointCLASS::ExecuteTask(UBehaviorTreeComponent
 
 
 
-	UE_LOG(LogTemp, Warning, TEXT("Waypoint index: %i"), IndexFinder)
+	//UE_LOG(LogTemp, Warning, TEXT("Waypoint index: %i"), IndexFinder)
 	return EBTNodeResult::Succeeded;
 }
