@@ -5,6 +5,7 @@
 #include "Engine/EngineTypes.h"
 #include "Public/DrawDebugHelpers.h"
 #include "CPP_ActorPool.h"
+#include "NavigationSystem/Public/NavigationSystem.h"
 
 // Sets default values
 ACPP_Tile::ACPP_Tile()
@@ -123,5 +124,6 @@ void ACPP_Tile::PositionNavMeshBoundsVolume()
 
 	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
 	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
+	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
 }
 
