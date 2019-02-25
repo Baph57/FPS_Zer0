@@ -43,7 +43,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class ABallisticsProjectile> ProjectileClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	//Ammo count for reloading/added difficulty
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
 	int32 AmmoCount = 30;
 
 	/** Sound to play each time we fire */

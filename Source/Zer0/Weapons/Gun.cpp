@@ -71,36 +71,40 @@ void AGun::OnFire()
 		UWorld* const World = GetWorld();
 		if (World != nullptr)
 		{
-				//Set Spawn Collision Handling Override
-				FActorSpawnParameters ActorSpawnParams;
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 
-
-				if(AmmoCount > 0)
-				{
+			//Added ammo functionality
+			if (AmmoCount > 0)
+			{
 				// spawn the projectile at the muzzle
 				World->SpawnActor<ABallisticsProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-				}
+				AmmoCount--;
+
+			}
 		}
-	}
 
-	// try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-	}
+		if (AmmoCount > 0) {
+			// try and play the sound if specified
+			if (FireSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			}
 
-	// First person designation for animations
-	if (FireAnimation1P != nullptr && AnimInstance1P != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		AnimInstance1P->Montage_Play(FireAnimation1P, 1.f);
-	}
+			// First person designation for animations
+			if (FireAnimation1P != nullptr && AnimInstance1P != nullptr)
+			{
+				// Get the animation object for the arms mesh
+				AnimInstance1P->Montage_Play(FireAnimation1P, 1.f);
+			}
 
-	// Third person designation for animations
-	if(FireAnimation3P != nullptr && AnimInstance3P != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		AnimInstance3P->Montage_Play(FireAnimation3P, 1.f);
+			// Third person designation for animations
+			if (FireAnimation3P != nullptr && AnimInstance3P != nullptr)
+			{
+				// Get the animation object for the arms mesh
+				AnimInstance3P->Montage_Play(FireAnimation3P, 1.f);
+			}
+		}
 	}
 }
