@@ -39,6 +39,52 @@ void AAlt_Projectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UP
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 		auto HitParam = GetActorLocation().ToString();
 		UE_LOG(LogTemp, Warning, TEXT("Line 41 BallisticsProjectile.cpp || %s"), *HitParam)
-			Destroy();
+		Destroy();
+
+		//on hit, deactivate our launchblast particles, enable impact particles, and fire our explosion physics
+		LaunchBlast->Deactivate();
+		ImpactBlast->Activate();
+		ExplosionForce->FireImpulse();
+
+		//setting new root component for reference and deleting our initial static mesh component
+		SetRootComponent(ImpactBlast);
+		Alt_CollisionComp->DestroyComponent();
+
+		//damage
+		UGameplayStatics::ApplyRadialDamage(
+			this, //where the damage is applied from
+			ProjectileDamage, //amount of damage to apply
+			GetActorLocation(), //getting the location of our projectile in the world
+			ExplosionForce->Radius, //damaging radius, 'looking through' explosion force and just grabbing/using its radius
+			UDamageType::StaticClass(), //Lookup documentation for further detail
+			TArray<AActor*>() //damage all actors within the radius
+		);
+
+		//setting our timer
+		FTimerHandle Timer;
+
+		//get world, get time manager, set a timer, give it our above timer, run our method after timer
+		//and give the timer our delay for destroy()
+		GetWorld()->GetTimerManager().SetTimer(
+			Timer,
+			this,
+			&AProjectile::OnTimerExpire,
+			DestroyDelay,
+			false
+		);
 	}
+}
+
+void AAlt_Projectile::LaunchProjectile(float Speed)
+{
+	//using previously declared forward vector of our tank barrel
+	TankProjectileMovement->SetVelocityInLocalSpace(FVector::ForwardVector * Speed);
+
+	//now that we have projectile speed we will activate the movement
+	TankProjectileMovement->Activate();
+}
+
+void AProjectile::OnTimerExpire()
+{
+	Destroy();
 }
