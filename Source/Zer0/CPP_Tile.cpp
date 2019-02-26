@@ -35,11 +35,11 @@ void ACPP_Tile::PositionNavMeshBoundsVolume()
 	NavMeshBoundsVolume = ActorPool->Checkout();
 	if (NavMeshBoundsVolume == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 120|| [%s]"), *GetName())
+		UE_LOG(LogTemp, Error, TEXT("CPP_Tile.cpp LINE 38|| [%s]"), *GetName())
 			return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
+	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 42|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
 
 	NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
 	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
@@ -80,7 +80,7 @@ void ACPP_Tile::PlaceActor(TSubclassOf<APawn> PawnToSpawn, FSpawnPosition& Spawn
 	FRotator SpawnRotation = FRotator(0, SpawnPosition.Rotation, 0);
 	APawn* SpawnedPawn = GetWorld()->SpawnActor<APawn>(PawnToSpawn, SpawnPosition.Location, SpawnRotation);
 	if (SpawnedPawn == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Line82 || CPP_Tile.cpp || No Pawn"))
+		UE_LOG(LogTemp, Warning, TEXT("Line 83 || CPP_Tile.cpp || No Pawn"))
 		return;
 	}
 	SpawnedPawn->SetActorRelativeLocation(SpawnPosition.Location);
@@ -137,7 +137,7 @@ void ACPP_Tile::PlaceActor(TSubclassOf<AActor> ActorToSpawn, FSpawnPosition& Des
 {
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
 	if (SpawnedActor == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("Line82 || CPP_Tile.cpp || No Pawn"))
+		UE_LOG(LogTemp, Warning, TEXT("Line 83 || CPP_Tile.cpp || No Pawn"))
 			return;
 	}
 	SpawnedActor->SetActorRelativeLocation(DesiredSpawnLocation.Location);
