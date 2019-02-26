@@ -47,6 +47,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
 	int32 AmmoCount = 30;
 
+
+	//Ammo count for altfire
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Projectile)
+	int32 AltAmmoCount = 5;
+
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class USoundBase* FireSound;
@@ -61,6 +66,10 @@ public:
 	/** Fires a projectile. */
 	UFUNCTION(BlueprintCallable, Category = Gameplay)
 	void OnFire();
+
+	/** Fires a more powerful projectile. */
+	UFUNCTION(BlueprintCallable, Category = Gameplay)
+	void AltFire();
 
 protected:
 	// Called when the game starts or when spawned

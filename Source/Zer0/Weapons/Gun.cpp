@@ -108,3 +108,54 @@ void AGun::OnFire()
 		}
 	}
 }
+
+void AGun::AltFire()
+{
+	// try and fire a projectile
+	if (ProjectileClass != nullptr)
+	{
+		const FRotator SpawnRotation = FP_MuzzleLocation->GetComponentRotation();
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
+		const FVector SpawnLocation = FP_MuzzleLocation->GetComponentLocation();
+
+
+		UWorld* const World = GetWorld();
+		if (World != nullptr)
+		{
+			//Set Spawn Collision Handling Override
+			FActorSpawnParameters ActorSpawnParams;
+			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+
+			//Added ammo functionality
+			if (AltAmmoCount > 0)
+			{
+				// spawn the projectile at the muzzle
+				World->SpawnActor<ABallisticsProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
+				AltAmmoCount--;
+
+			}
+		}
+
+		if (AltAmmoCount > 0) {
+			// try and play the sound if specified
+			if (FireSound != nullptr)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+			}
+
+			// First person designation for animations
+			if (FireAnimation1P != nullptr && AnimInstance1P != nullptr)
+			{
+				// Get the animation object for the arms mesh
+				AnimInstance1P->Montage_Play(FireAnimation1P, 1.f);
+			}
+
+			// Third person designation for animations
+			if (FireAnimation3P != nullptr && AnimInstance3P != nullptr)
+			{
+				// Get the animation object for the arms mesh
+				AnimInstance3P->Montage_Play(FireAnimation3P, 1.f);
+			}
+		}
+	}
+}
