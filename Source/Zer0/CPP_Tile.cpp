@@ -41,7 +41,7 @@ void ACPP_Tile::PositionNavMeshBoundsVolume()
 
 	UE_LOG(LogTemp, Warning, TEXT("CPP_Tile.cpp LINE 124|| [%s] Checked out: {%s}"), *GetName(), *NavMeshBoundsVolume->GetName())
 
-		NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation() + NavigationBoundsOffset);
 	UNavigationSystemV1::GetNavigationSystem(GetWorld())->Build();
 }
 
